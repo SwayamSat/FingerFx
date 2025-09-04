@@ -3,35 +3,27 @@ import mediapipe as mp
 import numpy as np
 import time
 
-# --- INITIALIZATION ---
-# Initialize MediaPipe Hands
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 hands = mp_hands.Hands(
     static_image_mode=False,
-    max_num_hands=2,  # Set to detect up to two hands
+    max_num_hands=2,
     min_detection_confidence=0.5
 )
 
-# Finger tip landmarks for counting and selection
 TIP_IDS = [4, 8, 12, 16, 20]
-
-# Update the FILTERS list to include Glitch
 FILTERS = ["Black & White", "Sparkle", "Negative", "Glitch"]
 current_filter = "None"
 filter_rects = []
 
-# Initialize video capture
 cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     print("Error: Could not open video stream.")
     exit()
 
-# --- FILTER FUNCTIONS ---
 def apply_bw_filter(image):
     """Applies an intensified black and white filter."""
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # Increase contrast
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     enhanced_gray = clahe.apply(gray)
     return cv2.cvtColor(enhanced_gray, cv2.COLOR_GRAY2BGR)
@@ -41,18 +33,15 @@ def apply_sparkle_filter(image):
     sparkle_image = image.copy()
     height, width, _ = image.shape
     
-    # --- Star-shaped shines ---
     num_shines = 50 
     for _ in range(num_shines):
         x = np.random.randint(0, width)
         y = np.random.randint(0, height)
         radius = np.random.randint(2, 5) 
         
-        # Draw a central circle to represent the light source
         cv2.circle(sparkle_image, (x, y), radius, (255, 255, 255), -1)
         
-        # Draw starburst rays
-        num_rays = np.random.randint(4, 7) * 2  # Ensure even number of rays
+        num_rays = np.random.randint(4, 7) * 2
         angle_step = 360 / num_rays
         
         for i in range(num_rays):
@@ -97,7 +86,6 @@ def apply_glitch_filter(image):
 
     return glitch_image
 
-# --- UI AND SELECTION LOGIC ---
 def draw_ui(image):
     """Draws the filter selection menu at the bottom of the screen."""
     global filter_rects
@@ -105,13 +93,11 @@ def draw_ui(image):
     height, width, _ = image.shape
     menu_height = 80
     
-    # Draw a semi-transparent background for the menu
     overlay = image.copy()
     cv2.rectangle(overlay, (0, height - menu_height), (width, height), (0, 0, 0), -1)
     alpha = 0.5
     image = cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0)
 
-    # Calculate button width and position
     button_width = width // len(FILTERS)
     for i, filter_name in enumerate(FILTERS):
         x1 = i * button_width
@@ -190,27 +176,18 @@ def apply_selective_filter(image, landmarks1, landmarks2, filter_type):
     
     return cv2.add(result, background)
 
-# --- MAIN LOOP ---
 while True:
     success, image = cap.read()
     if not success:
         break
 
-    # Flip image and convert to RGB
     image = cv2.flip(image, 1)
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    
-    # Process the image to find hand landmarks
     results = hands.process(image_rgb)
-    
-    # Create a copy to apply filters on later
     filtered_output = image.copy()
-
-    # Draw UI and check for hand interactions
     filtered_output = draw_ui(filtered_output)
 
     if results.multi_hand_landmarks and len(results.multi_hand_landmarks) == 2:
-        # Assign hands based on their x-position for consistency
         if results.multi_hand_landmarks[0].landmark[0].x < results.multi_hand_landmarks[1].landmark[0].x:
             selection_hand_landmarks = results.multi_hand_landmarks[0]
             application_hand_landmarks = results.multi_hand_landmarks[1]
@@ -218,34 +195,26 @@ while True:
             selection_hand_landmarks = results.multi_hand_landmarks[1]
             application_hand_landmarks = results.multi_hand_landmarks[0]
         
-        # Get the index finger tip position of the selection hand
         h, w, _ = image.shape
         tip_x = int(selection_hand_landmarks.landmark[TIP_IDS[1]].x * w)
         tip_y = int(selection_hand_landmarks.landmark[TIP_IDS[1]].y * h)
         selection_point = (tip_x, tip_y)
         
-        # Highlight the selection finger
         cv2.circle(filtered_output, selection_point, 10, (0, 255, 0), -1)
 
-        # Check for filter selection
         selected_filter = check_selection(selection_point)
         if selected_filter != "None":
             current_filter = selected_filter
 
-        # Apply the current filter to the area between both hands
         filtered_output = apply_selective_filter(filtered_output, selection_hand_landmarks, application_hand_landmarks, current_filter)
 
-        # Draw landmarks on both hands for visualization
         for hand_landmarks in results.multi_hand_landmarks:
             mp_drawing.draw_landmarks(filtered_output, hand_landmarks, mp_hands.HAND_CONNECTIONS)
     
-    # Display the final output
     cv2.imshow("Multi-Hand Filter Controller", filtered_output)
 
-    # Exit on 'q' press
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Release resources
 cap.release()
 cv2.destroyAllWindows()
