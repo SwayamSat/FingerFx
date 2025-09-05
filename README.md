@@ -73,17 +73,21 @@ Explore FingerFx in action through these visual demonstrations.
 
 ## 🖼️ Screenshots
 
-<img src="https://placehold.co/800x450/2d2d4d/ffffff?text=App+Screenshot+1" alt="App Screenshot 1" width="100%">
+<img width="1920" height="1080" alt="Screenshot 2025-09-05 122736" src="https://github.com/user-attachments/assets/011ffa0e-9c01-4089-a245-fbf6796c45d1" />
 <em><p align="center">A view of the FingerFx application interface, showcasing the interactive filter selection menu and a live feed with an applied effect.</p></em>
 
 ## 🎬 Video Demos
 
-<a href="https://github.com/user-attachments/assets/0691c1eb-d1cf-487f-a646-af207dad1acf
-" target="_blank">
+<a href="https://github.com/user-attachments/assets/0c997002-b7a1-44e6-ae04-e5aaf7191345" target="_blank">
+  <img width="1920" height="1080" alt="Screenshot 2025-09-05 122736" src="https://github.com/user-attachments/assets/011ffa0e-9c01-4089-a245-fbf6796c45d1" />
 </a>
 <em><p align="center">Witness the real-time application of various FingerFx filters through intuitive hand gestures.</p></em>
 
 ---
+
+
+https://github.com/user-attachments/assets/0c997002-b7a1-44e6-ae04-e5aaf7191345
+
 
 ## 🚀 Getting Started
 
