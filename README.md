@@ -79,7 +79,6 @@ Explore FingerFx in action through these visual demonstrations.
 ## 🎬 Video Demos
 
 <a href="https://github.com/user-attachments/assets/0c997002-b7a1-44e6-ae04-e5aaf7191345" target="_blank">
-  <img width="1920" height="1080" alt="Screenshot 2025-09-05 122736" src="https://github.com/user-attachments/assets/011ffa0e-9c01-4089-a245-fbf6796c45d1" />
 </a>
 <em><p align="center">Witness the real-time application of various FingerFx filters through intuitive hand gestures.</p></em>
 
